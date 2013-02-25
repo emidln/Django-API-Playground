@@ -37,7 +37,12 @@
                 // firing presubmit event
                 options.presubmit.call(this, form);
 
-                var data = form.form2json();
+		var data = "";
+		if(form.data('urlencoded')) {
+			data = form.serialize();
+		} else {
+			data = form.form2json();
+		}
                 var method = form.attr("method");
                 var url = form.attr("action");
                 var content_type = 'application/json';
@@ -45,11 +50,15 @@
                 // firing submit event
                 options.submit.call(this, form, build_request_headers(method, url, data,
                                                                 content_type));
-
+		if(form.data('urlencoded')) {
+			ajax_data = data;
+		} else {
+			ajax_data = JSON.stringify(data);
+		}
                 var ajax_parameters = {
                     url: url,
                     type: method,
-                    data: JSON.stringify(data),
+                    data: ajax_data,
                     contentType: content_type,
                     dataType: 'json',
                     processData: false
